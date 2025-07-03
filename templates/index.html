@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assessment Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --border-focus: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-background);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            opacity: 0.1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            padding: 3rem 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--card-background);
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+            padding-right: 3rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-select:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .radio-section {
+            background: #f8fafc;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .radio-section:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .radio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radio-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-color), #1e40af);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .radio-label span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.2s ease;
+        }
+
+        .radio-input:checked + .radio-label {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .radio-input:checked + .radio-label::before {
+            opacity: 1;
+        }
+
+        .radio-input:checked + .radio-label span {
+            color: white;
+        }
+
+        .radio-label:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-button:hover::before {
+            left: 100%;
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-container {
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        .result-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid var(--success-color);
+            color: #065f46;
+        }
+
+        .result-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning-color);
+            color: #92400e;
+        }
+
+        .result-error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid var(--error-color);
+            color: #991b1b;
+        }
+
+        .disclaimer {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .disclaimer strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .header {
+                padding: 2rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 2rem 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .radio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <h1>Mental Health Assessment</h1>
+            <p>Professional evaluation tool for mental health screening</p>
+        </div>
+
+        <div class="form-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="family_history">Family History of Mental Illness</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="family_history" name="family_history" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Growing_Stress">Experiencing Growing Stress</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Growing_Stress" name="Growing_Stress" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Changes_Habits">Noticeable Changes in Habits</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Changes_Habits" name="Changes_Habits" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Mental_Health_History">Personal Mental Health History</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Mental_Health_History" name="Mental_Health_History" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Coping_Struggles">Struggling with Coping Mechanisms</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Coping_Struggles" name="Coping_Struggles" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Work_Interest">Loss of Interest in Work/Activities</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Work_Interest" name="Work_Interest" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Social_Weakness">Experiencing Social Weakness</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Social_Weakness" name="Social_Weakness" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Gender_Male">Gender</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="Gender_Male" name="Gender_Male" required>
+                                <option value="">Select gender</option>
+                                <option value="0">Female / Other</option>
+                                <option value="1">Male</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="self_employed_Yes">Employment Status</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="self_employed_Yes" name="self_employed_Yes" required>
+                                <option value="">Select status</option>
+                                <option value="0">Employed</option>
+                                <option value="1">Self-Employed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mental_health_interview_Yes">Mental Health Interview Experience</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="mental_health_interview_Yes" name="mental_health_interview_Yes" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="care_options_Yes">Care Options Available</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="care_options_Yes" name="care_options_Yes" required>
+                                <option value="">Select an option</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Occupation Category</label>
+                        <div class="radio-section">
+                            <div class="radio-grid">
+                                <div class="radio-option">
+                                    <input type="radio" class="radio-input" name="occupation" value="Occupation_Business" id="occ_business" required>
+                                    <label class="radio-label" for="occ_business">
+                                        <span>Business</span>
+                                    </label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" class="radio-input" name="occupation" value="Occupation_Corporate" id="occ_corporate">
+                                    <label class="radio-label" for="occ_corporate">
+                                        <span>Corporate</span>
+                                    </label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" class="radio-input" name="occupation" value="Occupation_Housewife" id="occ_housewife">
+                                    <label class="radio-label" for="occ_housewife">
+                                        <span>Housewife</span>
+                                    </label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" class="radio-input" name="occupation" value="Occupation_Student" id="occ_student">
+                                    <label class="radio-label" for="occ_student">
+                                        <span>Student</span>
+                                    </label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" class="radio-input" name="occupation" value="Occupation_Others" id="occ_others">
+                                    <label class="radio-label" for="occ_others">
+                                        <span>Others</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitBtn">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <span id="buttonText">Generate Assessment</span>
+                </button>
+            </form>
+
+            <div class="result-container" id="result">
+                Assessment results will appear here.
+            </div>
+
+            <div class="disclaimer">
+                <strong>Important Disclaimer:</strong> This tool is for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with any questions regarding mental health conditions.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Progress tracking
+        function updateProgress() {
+            const form = document.getElementById('predictionForm');
+            const inputs = form.querySelectorAll('select[required], input[required]');
+            let completed = 0;
+            
+            inputs.forEach(input => {
+                if (input.type === 'radio') {
+                    const radioGroup = form.querySelectorAll(`input[name="${input.name}"]`);
+                    const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (isChecked) completed++;
+                } else if (input.value !== '') {
+                    completed++;
+                }
+            });
+            
+            // Count radio group as one unit
+            const radioGroups = new Set();
+            inputs.forEach(input => {
+                if (input.type === 'radio') radioGroups.add(input.name);
+            });
+            
+            const totalInputs = inputs.length - Array.from(inputs).filter(input => input.type === 'radio').length + radioGroups.size;
+            const progress = (completed / totalInputs) * 100;
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Add event listeners for progress tracking
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predictionForm');
+            const inputs = form.querySelectorAll('select, input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', updateProgress);
+            });
+            
+            updateProgress(); // Initial progress check
+        });
+
+        // Form submission
+        document.getElementById('predictionForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const buttonText = document.getElementById('buttonText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultDiv = document.getElementById('result');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            buttonText.textContent = 'Processing Assessment...';
+            loadingSpinner.style.display = 'inline-block';
+            resultDiv.classList.remove('show');
+
+            // Initialize formData with all possible features set to 0
+            const formData = {
+                family_history: 0,
+                Growing_Stress: 0,
+                Changes_Habits: 0,
+                Mental_Health_History: 0,
+                Coping_Struggles: 0,
+                Work_Interest: 0,
+                Social_Weakness: 0,
+                Gender_Male: 0,
+                self_employed_Yes: 0,
+                mental_health_interview_Yes: 0,
+                care_options_Yes: 0,
+                Occupation_Business: 0,
+                Occupation_Corporate: 0,
+                Occupation_Housewife: 0,
+                Occupation_Others: 0,
+                Occupation_Student: 0
+            };
+
+            // Populate formData from select elements
+            const selectFields = [
+                'family_history', 'Growing_Stress', 'Changes_Habits', 'Mental_Health_History',
+                'Coping_Struggles', 'Work_Interest', 'Social_Weakness', 'Gender_Male',
+                'self_employed_Yes', 'mental_health_interview_Yes', 'care_options_Yes'
+            ];
+
+            selectFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element && element.value !== '') {
+                    formData[field] = parseInt(element.value);
+                }
+            });
+
+            // Handle Occupation radio buttons
+            const selectedOccupation = document.querySelector('input[name="occupation"]:checked');
+            if (selectedOccupation) {
+                formData[selectedOccupation.value] = 1;
+            }
+
+            try {
+                // Simulate API call delay for demo purposes
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    let predictionText = "Assessment could not be completed.";
+                    let resultClass = "result-error";
+
+                    if (result.prediction === 0) {
+                        predictionText = "Assessment Result: Mental health indicators appear to be within normal range. Continue maintaining healthy habits and seek support when needed.";
+                        resultClass = "result-success";
+                    } else if (result.prediction === 1) {
+                        predictionText = "Assessment Result: Some indicators suggest potential mental health concerns. We recommend consulting with a qualified mental health professional for proper evaluation and support.";
+                        resultClass = "result-warning";
+                    }
+
+                    resultDiv.textContent = predictionText;
+                    resultDiv.className = `result-container ${resultClass}`;
+                } else {
+                    resultDiv.textContent = 'Error: ' + (result.error || 'Unable to process assessment at this time.');
+                    resultDiv.className = 'result-container result-error';
+                }
+            } catch (error) {
+                console.error('Assessment error:', error);
+                resultDiv.textContent = 'Unable to connect to assessment service. Please check your connection and try again.';
+                resultDiv.className = 'result-container result-error';
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                buttonText.textContent = 'Generate Assessment';
+                loadingSpinner.style.display = 'none';
+                
+                // Show result with animation
+                setTimeout(() => {
+                    resultDiv.classList.add('show');
+                }, 100);
+            }
+        });
+
+        // Form validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predictionForm');
+            const inputs = form.querySelectorAll('select[required]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = 'var(--error-color)';
+                    this.style.boxShadow = '0 0 0 3px rgb(239 68 68 / 0.1)';
+                });
+                
+                input.addEventListener('change', function() {
+                    if (this.value !== '') {
+                        this.style.borderColor = 'var(--success-color)';
+                        this.style.boxShadow = '0 0 0 3px rgb(16 185 129 / 0.1)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
